@@ -67,6 +67,7 @@ export class Logger {
 
     uploader.setEnvironment(opts.environment);
     this.isInitialized = true;
+    this.debug('logger initialized', null, true);
   }
 
   log (message: string | Error, details?: any, skipServer?: boolean): void {
@@ -173,8 +174,9 @@ export class Logger {
 
     try {
       this.logRequestPending = true;
+      this.debug('Uploading logs', null, true);
       await uploader.sendLogs(request);
-      this.log('Log data sent successfully', null, true);
+      this.debug('Logs successfully uploaded', null, true);
       this.reset();
       if (this.logBuffer.length) {
         this.log('Data still left in log buffer, preparing to send again', null, true);

@@ -75,10 +75,12 @@ export class LogUploader {
       contentType: 'application/json; charset=UTF-8',
       data: JSON.stringify(queueItem.request)
     })
-      .then(() => {
+      .then((response) => {
         this.backoff.reset();
         this.hasPendingRequest = false;
-        queueItem.deferred.resolve();
+        const correlationId = response.headers['ININ-Correlation-Id'];
+        console.debug('log upload correlationId', correlationId);
+        queueItem.deferred.resolve(correlationId);
       })
       .catch((err) => {
         // reset as long as we aren't throttled
@@ -87,6 +89,8 @@ export class LogUploader {
         }
 
         this.hasPendingRequest = false;
+        const correlationId = err.response.headers['ININ-Correlation-Id'];
+        console.debug('log upload correlationId', correlationId);
         queueItem.deferred.reject(err);
       });
   }
